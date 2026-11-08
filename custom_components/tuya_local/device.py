@@ -20,6 +20,7 @@ from .const import (
     API_PROTOCOL_VERSIONS,
     CONF_DEVICE_CID,
     CONF_DEVICE_ID,
+    CONF_FORCE_DEVICE22,
     CONF_LOCAL_KEY,
     CONF_MANUFACTURER,
     CONF_MODEL,
@@ -60,6 +61,7 @@ class TuyaLocalDevice(object):
         poll_only=False,
         manufacturer=None,
         model=None,
+        force_device22=False,
     ):
         """
         Represents a Tuya-based device.
@@ -75,8 +77,10 @@ class TuyaLocalDevice(object):
             poll_only (bool): True if the device should be polled only.
             manufacturer (str | None): The device manufacturer, if known.
             model (str | None): The device model, if known.
+            force_device22 (bool): Force the alternate device22 query format.
         """
         self._name = name
+        self._force_device22 = force_device22
         self._manufacturer = manufacturer
         self._model = model
         self._children = []
@@ -133,6 +137,15 @@ class TuyaLocalDevice(object):
                 dev_id,
             )
             raise e
+
+        if self._force_device22:
+            self._api.dev_type = "device22"
+            # Read-only camera status DPs; no values are written to the device.
+            self._api.set_dpsUsed({"109": None, "110": None, "136": None})
+        elif getattr(self._api, "_tuya_local_forced_device22", False) is True:
+            # An options reload may reuse the previous TinyTuya API object.
+            self._api.dev_type = "default"
+        self._api._tuya_local_forced_device22 = self._force_device22
 
         # we handle retries at a higher level so we can rotate protocol version
         self._api.set_socketRetryLimit(1)
@@ -482,18 +495,19 @@ class TuyaLocalDevice(object):
             # vendor specific dps start.  Between them, these three should cover
             # most devices.  148 covers a doorbell device that didn't have these
             # 201 covers remote controllers and 2 and 9 cover others without 1
-            self._api.set_dpsUsed(
-                {
-                    "1": None,
-                    "2": None,
-                    "9": None,
-                    "20": None,
-                    "60": None,
-                    "101": None,
-                    "148": None,
-                    "201": None,
-                }
-            )
+            query_dps = {
+                "1": None,
+                "2": None,
+                "9": None,
+                "20": None,
+                "60": None,
+                "101": None,
+                "148": None,
+                "201": None,
+            }
+            if self._force_device22:
+                query_dps.update({"109": None, "110": None, "136": None})
+            self._api.set_dpsUsed(query_dps)
             await self.async_refresh()
             cached_state = self._get_cached_state()
 
@@ -831,6 +845,9 @@ class TuyaLocalDevice(object):
                 self._api.parent.set_version,
                 new_version,
             )
+        if self._force_device22:
+            self._api.dev_type = "device22"
+            self._api.disabledetect = True
 
     @staticmethod
     def get_key_for_value(obj, value, fallback=None):
@@ -855,6 +872,7 @@ def setup_device(hass: HomeAssistant, config: dict):
         config[CONF_POLL_ONLY],
         manufacturer=config.get(CONF_MANUFACTURER),
         model=config.get(CONF_MODEL),
+        force_device22=config.get(CONF_FORCE_DEVICE22, False),
     )
     hass.data[DOMAIN][get_device_id(config)] = {
         "device": device,

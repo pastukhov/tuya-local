@@ -41,6 +41,7 @@
                     "local_key": "Lokal nøkkel",
                     "protocol_version": "Protocol versjon (prøv auto hvis du der usikker)",
                     "poll_only": "Kun poll (prøv dette hvis enhenten ikke virker ordentlig)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "Underenhets node_id eller uuid (for enheter tilkoblet via gateway)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "IP addresse eller vertsnavn",
                     "local_key": "Lokal nøkkel",
                     "protocol_version": "Protocol versjon (prøv auto hvis du der usikker)",
-                    "poll_only": "Kun poll (prøv dette hvis enhenten ikke virker ordentlig)"
+                    "poll_only": "Kun poll (prøv dette hvis enhenten ikke virker ordentlig)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

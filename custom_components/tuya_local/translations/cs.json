@@ -41,6 +41,7 @@
                     "local_key": "lokální klíč (local_key)",
                     "protocol_version": "Verze protokolu (zkuste auto pokud ji neznáte)",
                     "poll_only": "Poll only (vyzkoušejte pokud zařízení úplně nefunguje)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "Sub device node_id nebo uuid (pro zařízení připojená pomocí brány)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "IP adresa nebo název hostitele (hostname)",
                     "local_key": "lokální klíč (local_key)",
                     "protocol_version": "Verze protokolu (zkuste auto pokud ji neznáte)",
-                    "poll_only": "Poll only (vyzkoušejte pokud zařízení úplně nefunguje)"
+                    "poll_only": "Poll only (vyzkoušejte pokud zařízení úplně nefunguje)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

@@ -41,6 +41,7 @@
                     "local_key": "Lokal nyckel",
                     "protocol_version": "Protokoll version (prova auto om okänd)",
                     "poll_only": "Endast polling (prova detta om din enhet inte fungerar helt)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "Sub-enhet node_id eller uuid (för enheter anslutna via gateway)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "IP-adress eller värdnamn",
                     "local_key": "Lokal nyckel",
                     "protocol_version": "Protokollversion (prova auto om okänd)",
-                    "poll_only": "Endast polling (prova detta om din enhet inte fungerar helt)"
+                    "poll_only": "Endast polling (prova detta om din enhet inte fungerar helt)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

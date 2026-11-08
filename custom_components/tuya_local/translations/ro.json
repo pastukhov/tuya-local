@@ -41,6 +41,7 @@
                     "local_key": "Cheie locală",
                     "protocol_version": "Versiunea protocolului (încercați auto dacă nu este cunoscută)",
                     "poll_only": "Doar interogare (încercați dacă dispozitivul nu funcționează complet)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "Sub-device node_id sau uuid (pentru dispozitive conectate prin gateway)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "Adresă IP sau hostname",
                     "local_key": "Cheie locală",
                     "protocol_version": "Versiunea protocolului (încercați auto dacă nu este cunoscută)",
-                    "poll_only": "Doar interogare (încercați dacă dispozitivul nu funcționează complet)"
+                    "poll_only": "Doar interogare (încercați dacă dispozitivul nu funcționează complet)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

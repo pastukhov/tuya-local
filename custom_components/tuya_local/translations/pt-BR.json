@@ -41,6 +41,7 @@
                     "local_key": "Chave Local",
                     "protocol_version": "Versão do protocolo (tente auto se não souber)",
                     "poll_only": "Pesquisar (tente isto se o seu dispositivo não funcionar totalmente)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "node_id ou uuid do sub-dispoitivo (para dispositivos conectados via gateway)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "Endereço IP ou nome do host",
                     "local_key": "Chave Local",
                     "protocol_version": "Versão do protocolo (tente auto se não souber)",
-                    "poll_only": "Pesquisar (tente isto se o seu dispositivo não funcionar totalmente)"
+                    "poll_only": "Pesquisar (tente isto se o seu dispositivo não funcionar totalmente)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

@@ -29,6 +29,7 @@ from .const import (
     API_PROTOCOL_VERSIONS,
     CONF_DEVICE_CID,
     CONF_DEVICE_ID,
+    CONF_FORCE_DEVICE22,
     CONF_LOCAL_KEY,
     CONF_MANUFACTURER,
     CONF_MODEL,
@@ -386,6 +387,7 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         key_opts = {}
         proto_opts = {"default": "auto"}
         polling_opts = {"default": False}
+        force_device22_opts = {"default": False}
         devcid_opts = {}
 
         if self.__discovered_device is not None:
@@ -438,6 +440,9 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                     devcid_opts["default"] = user_input[CONF_DEVICE_CID]
                 proto_opts["default"] = str(user_input[CONF_PROTOCOL_VERSION])
                 polling_opts["default"] = user_input[CONF_POLL_ONLY]
+                force_device22_opts["default"] = user_input.get(
+                    CONF_FORCE_DEVICE22, False
+                )
 
         return self.async_show_form(
             step_id="local",
@@ -451,6 +456,7 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                         **proto_opts,
                     ): vol.In(["auto"] + [str(v) for v in API_PROTOCOL_VERSIONS]),
                     vol.Required(CONF_POLL_ONLY, **polling_opts): bool,
+                    vol.Optional(CONF_FORCE_DEVICE22, **force_device22_opts): bool,
                     vol.Optional(CONF_DEVICE_CID, **devcid_opts): str,
                 }
             ),
@@ -645,6 +651,9 @@ class OptionsFlowHandler(OptionsFlow):
             vol.Required(
                 CONF_POLL_ONLY, default=config.get(CONF_POLL_ONLY, False)
             ): bool,
+            vol.Optional(
+                CONF_FORCE_DEVICE22, default=config.get(CONF_FORCE_DEVICE22, False)
+            ): bool,
         }
         cfg = await self.hass.async_add_executor_job(
             get_config,
@@ -673,6 +682,7 @@ def create_test_device(hass: HomeAssistant, config: dict):
         subdevice_id,
         hass,
         True,
+        force_device22=config.get(CONF_FORCE_DEVICE22, False),
     )
 
     return device

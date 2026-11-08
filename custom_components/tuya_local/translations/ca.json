@@ -40,6 +40,7 @@
                     "local_key": "Clau local",
                     "protocol_version": "Versió del protocol (intenteu-ho automàticament si no es coneix)",
                     "poll_only": "Només enquestes (proveu això si el vostre dispositiu no funciona completament)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "node_id o uuid del subdispositiu (per a dispositius connectats a través d'una passarel·la)"
                 }
             },
@@ -94,7 +95,8 @@
                     "host": "Adreça IP o nom d'amfitrió",
                     "local_key": "Clau local",
                     "protocol_version": "Versió del protocol (intenteu-ho automàticament si no es coneix)",
-                    "poll_only": "Només enquestes (proveu això si el vostre dispositiu no funciona completament)"
+                    "poll_only": "Només enquestes (proveu això si el vostre dispositiu no funciona completament)",
+                    "force_device22": "Force device22 query format (only if required)"
                 },
                 "description": "[Seguiu aquestes instruccions per a trobar la vostra clau local.]({device_details_url})"
             }

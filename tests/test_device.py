@@ -124,6 +124,42 @@ async def test_refreshes_state_if_no_cached_state_exists(subject, mocker):
 
 
 @pytest.mark.asyncio
+async def test_discovery_reads_camera_storage_when_initial_status_is_empty(
+    subject, mock_api, mocker
+):
+    """Include storage DP109 when probing cameras with no default status."""
+    subject._cached_state = {"updated_at": time()}
+    subject._force_device22 = True
+
+    async def refresh():
+        requested = mock_api().set_dpsUsed.call_args.args[0]
+        if "109" in requested:
+            subject._cached_state["109"] = "30000|4000|26000"
+
+    mocker.patch.object(subject, "async_refresh", side_effect=refresh)
+
+    await subject.async_possible_types()
+
+    assert subject.get_property("109") == "30000|4000|26000"
+    mock_api().set_status.assert_not_called()
+    mock_api().set_multiple_values.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_discovery_keeps_existing_query_when_status_has_dps(
+    subject, mock_api, mocker
+):
+    """Do not probe extra datapoints for a device already returning status."""
+    subject._cached_state = {"1": True, "updated_at": time()}
+    refresh = mocker.patch.object(subject, "async_refresh")
+
+    await subject.async_possible_types()
+
+    mock_api().set_dpsUsed.assert_not_called()
+    refresh.assert_not_called()
+
+
+@pytest.mark.asyncio
 async def test_detection_returns_none_when_device_type_not_detected(subject):
     subject._cached_state = {"192": False, "updated_at": time()}
     assert await subject.async_inferred_type() is None
@@ -756,3 +792,64 @@ async def test_refresh_error_914_stays_quiet_when_rotating_protocols(
         await subject.async_refresh()
 
     assert caplog.text == ""
+
+
+@pytest.mark.asyncio
+async def test_forced_device22_keeps_version_and_seeds_read_query(
+    patched_hass, mock_api
+):
+    device = TuyaLocalDevice(
+        "Test",
+        "device",
+        "host",
+        "key",
+        3.3,
+        None,
+        patched_hass,
+        force_device22=True,
+    )
+    await device._rotate_api_protocol_version()
+    assert mock_api().dev_type == "device22"
+    assert mock_api().disabledetect is True
+    mock_api().set_version.assert_called_once_with(3.3)
+    mock_api().set_dpsUsed.assert_called_once_with(
+        {"109": None, "110": None, "136": None}
+    )
+    mock_api().set_status.assert_not_called()
+    mock_api().set_multiple_values.assert_not_called()
+
+
+def test_force_device22_defaults_to_disabled(subject, mock_api):
+    assert subject._force_device22 is False
+    mock_api().set_dpsUsed.assert_not_called()
+
+
+def test_disabling_force_device22_resets_reused_api(patched_hass, mock_api):
+    api = mock_api()
+    api._tuya_local_forced_device22 = True
+    api.dev_type = "device22"
+    patched_hass.data[DOMAIN]["device"] = {"tuyadevice": api}
+    TuyaLocalDevice("Device", "device", "host", "key", 3.3, None, patched_hass)
+    assert api.dev_type == "default"
+    assert api._tuya_local_forced_device22 is False
+
+
+@pytest.mark.asyncio
+async def test_discovery_keeps_default_probe_when_force_is_disabled(
+    subject, mock_api, mocker
+):
+    mocker.patch.object(subject, "async_refresh", mocker.AsyncMock())
+    subject._cached_state = {"updated_at": 0}
+    await subject.async_possible_types()
+    mock_api().set_dpsUsed.assert_called_once_with(
+        {
+            "1": None,
+            "2": None,
+            "9": None,
+            "20": None,
+            "60": None,
+            "101": None,
+            "148": None,
+            "201": None,
+        }
+    )

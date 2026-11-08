@@ -41,6 +41,7 @@
                     "local_key": "Kunci lokal (local_key)",
                     "protocol_version": "Versi protokol (coba otomatis bila tidak diketahui)",
                     "poll_only": "Hanya poll (Coba ini bila perangkat Anda tidak berfungsi secara penuh)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "node_id atau uuid sub perangkat (untuk perangkat yang tersambung via gateway)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "Alamat IP atau nama hos",
                     "local_key": "Kunci lokal (local_key)",
                     "protocol_version": "Versi protokol (coba otomatis bila tidak diketahui)",
-                    "poll_only": "Hanya poll (Coba ini bila perangkat Anda tidak berfungsi secara penuh)"
+                    "poll_only": "Hanya poll (Coba ini bila perangkat Anda tidak berfungsi secara penuh)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

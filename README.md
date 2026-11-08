@@ -82,6 +82,10 @@ Note that each time you pair the device, the local key changes, so if you obtain
 
 &nbsp;&nbsp;&nbsp;&nbsp;_(string or float) (Required)_ Valid options are "auto", 3.1, 3.2, 3.3, 3.4, 3.5, 3.22.  If you aren't sure, choose "auto", but some 3.2, 3.22 and maybe 3.4 devices may be misdetected as 3.3 (or vice-versa), so if your device does not seem to respond to commands reliably, try selecting between those protocol versions. Protocol 3.22 is a special case, that enables tinytuya's "device22" detection with protocol 3.3. Previously we let tinytuya auto-detect this, but it was found to sometimes misdetect genuine 3.3 devices as device22 which stops them receiving updates, so an explicit version was added to enable the device22 detection.
 
+#### force_device22
+
+&nbsp;&nbsp;&nbsp;&nbsp;_(boolean) (Optional, default false)_ Force TinyTuya's alternate device22 query format during connection testing and normal operation. Use this only when the device is known to require that format but protocol 3.22 auto-detection does not select it. The protocol version remains a separate setting; the JVS GRANT HD WiFi requires version 3.3 with this option enabled. Initial reads include camera storage/status datapoints 109, 110 and 136. Enabling this option does not send datapoint writes. Existing protocol and auto-detection behavior is unchanged when the option is disabled.
+
 At the end of this step, an attempt is made to connect to the device and see if
 it returns any data. For tuya protocol version 3.1 devices, the local key is
 only used for sending commands to the device, so if your local key is

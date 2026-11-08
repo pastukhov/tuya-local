@@ -41,6 +41,7 @@
                     "local_key": "Local key",
                     "protocol_version": "Wersja protokołu (spróbuj auto jeśli nieznana)",
                     "poll_only": "Poll only (spróbuj jeśli Twoje urządzenie nie działa w pełni)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "Sub device node_id lub uuid (dla urządzeń podłączonych poprzez bramkę)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "Adres IP lub nazwa hosta",
                     "local_key": "Local key",
                     "protocol_version": "Wersja protokołu (spróbuj auto jeśli nieznana)",
-                    "poll_only": "Poll only (spróbuj jeśli Twoje urządzenie nie działa w pełni)"
+                    "poll_only": "Poll only (spróbuj jeśli Twoje urządzenie nie działa w pełni)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

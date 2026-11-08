@@ -41,6 +41,7 @@
                     "local_key": "Helyi kulcs (local_key)",
                     "protocol_version": "Protokol verzió (hagyd auto-n, ha nem tudod)",
                     "poll_only": "Csak olvasás (próbáld ki ezt, ha az eszköz nem működik rendesen)",
+                    "force_device22": "Force device22 query format (only if required)",
                     "device_cid": "Aleszköz node_id vagy uuid (átjárón keresztül használt eszközök esetén)"
                 }
             },
@@ -95,7 +96,8 @@
                     "host": "IP cím vagy állomásnév",
                     "local_key": "Helyi kulcs (local_key)",
                     "protocol_version": "Protokol verzió (hagyd auto-n, ha nem tudod)",
-                    "poll_only": "Csak olvasás (próbáld ki ezt, ha az eszköz nem működik rendesen)"
+                    "poll_only": "Csak olvasás (próbáld ki ezt, ha az eszköz nem működik rendesen)",
+                    "force_device22": "Force device22 query format (only if required)"
                 }
             }
         },

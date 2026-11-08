@@ -21,6 +21,7 @@ from custom_components.tuya_local import (
 from custom_components.tuya_local.const import (
     CONF_DEVICE_CID,
     CONF_DEVICE_ID,
+    CONF_FORCE_DEVICE22,
     CONF_LOCAL_KEY,
     CONF_POLL_ONLY,
     CONF_PROTOCOL_VERSION,
@@ -808,6 +809,7 @@ async def test_options_flow_modifies_config(hass, bypass_setup, mocker):
         CONF_HOST: "new_hostname",
         CONF_LOCAL_KEY: "new_key",
         CONF_POLL_ONLY: False,
+        CONF_FORCE_DEVICE22: False,
         CONF_PROTOCOL_VERSION: 3.3,
     }
     assert "create_entry" == result["type"]
@@ -1712,3 +1714,49 @@ async def test_flow_integration_discovery_aborts_if_configured(hass):
     )
     assert result["type"] == "abort"
     assert result["reason"] == "already_configured"
+
+
+@pytest.mark.parametrize("forced", [False, True])
+@pytest.mark.parametrize("factory", ["test", "runtime"])
+def test_device22_option_reaches_test_and_runtime_device(hass, mocker, factory, forced):
+    """Carry an opt-in transport setting through setup and connection tests."""
+    from custom_components.tuya_local import device as device_module
+
+    if factory == "test":
+        constructor = mocker.patch.object(config_flow, "TuyaLocalDevice")
+        create = config_flow.create_test_device
+    else:
+        constructor = mocker.patch.object(device_module, "TuyaLocalDevice")
+        create = device_module.setup_device
+    config = {
+        "name": "Doorbell",
+        "device_id": "test_device",
+        "host": "test_host",
+        "local_key": TESTKEY,
+        "protocol_version": 3.3,
+        "poll_only": False,
+    }
+    if forced:
+        config["force_device22"] = True
+    hass.data[DOMAIN] = {}
+
+    create(hass, config)
+
+    assert constructor.call_args.kwargs["force_device22"] is forced
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("forced", [False, True])
+async def test_local_form_accepts_force_device22_option(hass, forced):
+    form = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": "local"}
+    )
+    validated = form["data_schema"](
+        {
+            CONF_DEVICE_ID: "test_device",
+            CONF_HOST: "test_host",
+            CONF_LOCAL_KEY: TESTKEY,
+            CONF_FORCE_DEVICE22: forced,
+        }
+    )
+    assert validated[CONF_FORCE_DEVICE22] is forced
