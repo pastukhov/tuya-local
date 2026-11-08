@@ -1,0 +1,47 @@
+name: Doorbell
+products:
+  - id: ixzur437dljmahij
+    manufacturer: JVS
+    model: GRANT HD WiFi
+entities:
+  - entity: sensor
+    class: enum
+    translation_key: sd_status
+    category: diagnostic
+    dps:
+      - id: 109
+        type: string
+        name: storage
+        readonly: true
+      - id: 110
+        type: integer
+        optional: true
+        readonly: true
+        name: sensor
+        mapping:
+          - dps_val: 1
+            value: normal
+          - dps_val: 2
+            value: fault
+          - dps_val: 3
+            value: full
+          - dps_val: 4
+            value: formatting
+          - dps_val: 5
+            value: missing
+  - entity: event
+    class: doorbell
+    dps:
+      - id: 239
+        type: string
+        optional: true
+        readonly: true
+        name: event
+        mapping:
+          - dps_val: Ring
+            value: ring
+          - dps_val: Normal
+            value: null
+            hidden: true
+          - value: null
+            hidden: true
