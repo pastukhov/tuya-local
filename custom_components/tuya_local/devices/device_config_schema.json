@@ -45,7 +45,7 @@
                 "properties": {
                     "entity": {
                         "type": "string",
-                        "enum": ["alarm_control_panel", "binary_sensor", "button", "climate", "cover", "datetime", "event", "fan", "humidifier", "infrared", "lawn_mower", "light", "lock", "number", "remote", "select", "sensor", "siren", "switch", "text", "time", "vacuum", "valve", "water_heater"],
+                        "enum": ["alarm_control_panel", "binary_sensor", "button", "camera", "climate", "cover", "datetime", "event", "fan", "humidifier", "infrared", "lawn_mower", "light", "lock", "number", "remote", "select", "sensor", "siren", "switch", "text", "time", "vacuum", "valve", "water_heater"],
                         "description": "The type of entity (e.g., light, switch, sensor)."
                     },
                     "name": {
@@ -92,6 +92,10 @@
                         "type": ["boolean", "string"],
                         "description": "true if the entity should be created as disabled by default. Useful for entities that are not commonly used or require advanced knowledge to use. If set to 'unavailable', the entity will be hidden when the 'available' dps indicates false."
                     },
+                    "local_webrtc": {
+                        "type": "boolean",
+                        "description": "Use the native LAN WebRTC media transport for this camera."
+                    },
                     "mode": {
                         "type": "string",
                         "enum": ["auto", "box", "slider"],
@@ -104,7 +108,6 @@
                     "dps": {
                         "type": "array",
                         "description": "The list of DPs that this entity uses.",
-                        "minItems": 1,
                         "items": {
                             "type": "object",
                             "properties": {
@@ -451,6 +454,16 @@
                         }
                     }
                 },
+                "allOf": [{
+                    "if": {
+                        "properties": {
+                            "entity": {"const": "camera"},
+                            "local_webrtc": {"const": true}
+                        },
+                        "required": ["entity", "local_webrtc"]
+                    },
+                    "else": {"properties": {"dps": {"minItems": 1}}}
+                }],
                 "required": ["entity", "dps"],
                 "additionalProperties": false
             }

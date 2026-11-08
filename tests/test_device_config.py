@@ -166,6 +166,7 @@ ENTITY_SCHEMA = vol.Schema(
         vol.Optional("icon"): vol.Match(r"^mdi:"),
         vol.Optional("icon_priority"): int,
         vol.Optional("deprecated"): str,
+        vol.Optional("local_webrtc"): bool,
         vol.Optional("mode"): vol.In(["box", "slider"]),
         vol.Optional("hidden"): vol.In([True, "unavailable"]),
         vol.Required("dps"): [DP_SCHEMA],

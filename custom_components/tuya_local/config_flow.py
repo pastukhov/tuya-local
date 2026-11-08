@@ -21,6 +21,9 @@ from homeassistant.helpers.selector import (
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
 )
 
 from . import DOMAIN
@@ -35,6 +38,7 @@ from .const import (
     CONF_MODEL,
     CONF_POLL_ONLY,
     CONF_PROTOCOL_VERSION,
+    CONF_RTC_AUTH,
     CONF_TYPE,
     CONF_USER_CODE,
     DATA_STORE,
@@ -457,6 +461,9 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                     ): vol.In(["auto"] + [str(v) for v in API_PROTOCOL_VERSIONS]),
                     vol.Required(CONF_POLL_ONLY, **polling_opts): bool,
                     vol.Optional(CONF_FORCE_DEVICE22, **force_device22_opts): bool,
+                    vol.Optional(CONF_RTC_AUTH): TextSelector(
+                        TextSelectorConfig(type=TextSelectorType.PASSWORD)
+                    ),
                     vol.Optional(CONF_DEVICE_CID, **devcid_opts): str,
                 }
             ),
@@ -628,17 +635,25 @@ class OptionsFlowHandler(OptionsFlow):
         config = {**self.config_entry.data, **self.config_entry.options}
 
         if user_input is not None:
+            # Leaving the password field empty retains the configured secret.
+            if not user_input.get(CONF_RTC_AUTH):
+                user_input.pop(CONF_RTC_AUTH, None)
             proto = user_input.get(CONF_PROTOCOL_VERSION)
             if proto != "auto":
                 user_input[CONF_PROTOCOL_VERSION] = float(proto)
             config = {**config, **user_input}
             device = await async_test_connection(config, self.hass)
             if device:
+                if config.get(CONF_RTC_AUTH):
+                    user_input[CONF_RTC_AUTH] = config[CONF_RTC_AUTH]
                 return self.async_create_entry(title="", data=user_input)
             else:
                 errors["base"] = "connection"
 
         schema = {
+            vol.Optional(CONF_RTC_AUTH): TextSelector(
+                TextSelectorConfig(type=TextSelectorType.PASSWORD)
+            ),
             vol.Required(
                 CONF_LOCAL_KEY,
                 default=config.get(CONF_LOCAL_KEY, ""),

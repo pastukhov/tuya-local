@@ -42,6 +42,7 @@
                     "protocol_version": "協議版本（如果不清楚，請選擇自動）",
                     "poll_only": "僅輪詢（如果設備無法正常運作，請選擇此項）",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "子設備node_id或uuid（對於透過網關連接的設備）"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Local key",
                     "protocol_version": "協議版本（如果不清楚，請選擇自動）",
                     "poll_only": "僅輪詢（如果設備無法正常運作，請選擇此項）",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

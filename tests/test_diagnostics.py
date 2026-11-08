@@ -197,3 +197,32 @@ def test_unrelated_entity_state_is_untouched():
     state = {"entity_id": "lock.other", "state": "locked", "attributes": {}}
 
     assert redact_entity(m_device, "some-other-unique-id", state) == state
+
+
+@pytest.mark.asyncio
+async def test_rtc_auth_is_omitted_from_diagnostics_data_and_options(hass):
+    """RTC credentials do not enter diagnostics through either storage location."""
+    import json
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={
+            CONF_DEVICE_ID: "device",
+            CONF_LOCAL_KEY: "key",
+            CONF_PROTOCOL_VERSION: 3.3,
+            CONF_TYPE: "jvs_granthd_doorbell",
+            "rtc_auth": "entry-rtc-secret",
+        },
+        options={"rtc_auth": "options-rtc-secret"},
+    )
+    device = Mock()
+    device._api_protocol_version_index = 0
+    device._children = []
+    device._cached_state = {}
+    device._pending_updates = {}
+    hass.data[DOMAIN] = {"device": {"device": device}}
+    result = await async_get_config_entry_diagnostics(hass, entry)
+    serialized = json.dumps(result, default=str)
+    assert "rtc_auth" not in serialized
+    assert "entry-rtc-secret" not in serialized
+    assert "options-rtc-secret" not in serialized

@@ -42,6 +42,7 @@
                     "protocol_version": "Έκδοση Πρωτοκόλλου (δοκιμάστε αυτόματο (auto) αν δεν το γνωρίζετε)",
                     "poll_only": "Ανίχνευση μόνο (δοκιμάστε αυτό αν η συσκευή δε λειτουργεί πλήρως)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "Sub device node_id ή uuid (για συσκευές συνδεμένες μέσω gateway)"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Local key",
                     "protocol_version": "Έκδοση Πρωτοκόλλου (δοκιμάστε αυτόματο (auto) αν δεν το γνωρίζετε)",
                     "poll_only": "Ανίχνευση μόνο (δοκιμάστε αυτό αν η συσκευή δε λειτουργεί πλήρως)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

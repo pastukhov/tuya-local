@@ -42,6 +42,7 @@
                     "protocol_version": "Protocol versjon (prøv auto hvis du der usikker)",
                     "poll_only": "Kun poll (prøv dette hvis enhenten ikke virker ordentlig)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "Underenhets node_id eller uuid (for enheter tilkoblet via gateway)"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Lokal nøkkel",
                     "protocol_version": "Protocol versjon (prøv auto hvis du der usikker)",
                     "poll_only": "Kun poll (prøv dette hvis enhenten ikke virker ordentlig)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

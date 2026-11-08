@@ -1760,3 +1760,58 @@ async def test_local_form_accepts_force_device22_option(hass, forced):
         }
     )
     assert validated[CONF_FORCE_DEVICE22] is forced
+
+
+@pytest.mark.asyncio
+async def test_options_keep_rtc_secret_without_echoing_it(hass, mocker):
+    """An empty password field keeps existing RTC credentials out of the form."""
+    from custom_components.tuya_local.const import CONF_RTC_AUTH
+
+    secret = "rtc-test-secret"  # noqa: S105 - dummy test credential
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        version=13,
+        data={
+            CONF_DEVICE_ID: "deviceid",
+            CONF_HOST: "hostname",
+            CONF_LOCAL_KEY: TESTKEY,
+            CONF_NAME: "test",
+            CONF_POLL_ONLY: False,
+            CONF_PROTOCOL_VERSION: 3.3,
+            CONF_TYPE: "smartplugv1",
+        },
+        options={CONF_RTC_AUTH: secret},
+    )
+    entry.add_to_hass(hass)
+    mocker.patch(
+        "custom_components.tuya_local.config_flow.async_test_connection",
+        return_value=mocker.Mock(),
+    )
+    form = await hass.config_entries.options.async_init(entry.entry_id)
+    marker = next(k for k in form["data_schema"].schema if k.schema == CONF_RTC_AUTH)
+    assert marker.default is vol.UNDEFINED
+    result = await hass.config_entries.options.async_configure(
+        form["flow_id"],
+        user_input={
+            CONF_HOST: "hostname",
+            CONF_LOCAL_KEY: TESTKEY,
+            CONF_PROTOCOL_VERSION: "3.3",
+            CONF_POLL_ONLY: False,
+            CONF_RTC_AUTH: "",
+        },
+    )
+    assert result["data"][CONF_RTC_AUTH] == secret
+
+
+def test_required_form_markers_have_no_extra_positional_default():
+    """A selector field must never become another field's positional default."""
+    import ast
+    from pathlib import Path
+
+    tree = ast.parse(Path(config_flow.__file__).read_text())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+            if node.func.attr == "Required":
+                assert len(node.args) == 1, (
+                    f"Invalid field marker on line {node.lineno}"
+                )

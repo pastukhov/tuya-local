@@ -42,6 +42,7 @@
                     "protocol_version": "Версия на протокола (опитайте автоматична, ако не е известна)",
                     "poll_only": "Само анкетиране (опитайте това, ако устройството ви не работи напълно)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "Sub device node_id или uuid (за устройства свързани чрез шлюз)"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Локален ключ",
                     "protocol_version": "Версия на протокола (опитайте автоматична, ако не е известна)",
                     "poll_only": "Само анкетиране (опитайте това, ако устройството ви не работи напълно)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

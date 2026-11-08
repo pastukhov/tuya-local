@@ -42,6 +42,7 @@
                     "protocol_version": "Protocol version (try auto if not known)",
                     "poll_only": "Poll only (try this if your device does not work fully)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "Sub device node_id or uuid (for devices connected via gateway)"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Local key",
                     "protocol_version": "Protocol version (try auto if not known)",
                     "poll_only": "Poll only (try this if your device does not work fully)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

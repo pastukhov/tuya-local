@@ -45,3 +45,6 @@ entities:
             hidden: true
           - value: null
             hidden: true
+  - entity: camera
+    local_webrtc: true
+    dps: []

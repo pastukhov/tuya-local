@@ -42,6 +42,7 @@
                     "protocol_version": "Verze protokolu (zkuste auto pokud ji neznáte)",
                     "poll_only": "Poll only (vyzkoušejte pokud zařízení úplně nefunguje)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "Sub device node_id nebo uuid (pro zařízení připojená pomocí brány)"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "lokální klíč (local_key)",
                     "protocol_version": "Verze protokolu (zkuste auto pokud ji neznáte)",
                     "poll_only": "Poll only (vyzkoušejte pokud zařízení úplně nefunguje)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

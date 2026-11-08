@@ -9,6 +9,7 @@ version = "0.0.0"
 requires-python = ">=3.14.2"
 dependencies = [
   "tinytuya~=1.20.0",
+  "aiortc==1.16.0",
   "tuya-device-sharing-sdk~=0.2.4"
 ]
 readme = "README.md"

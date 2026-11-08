@@ -321,3 +321,15 @@ Beyond contributing device configs, here are some areas that could benefit from 
 2. Once unit tests are complete, the next task is to properly evaluate against the Home Assistant quality scale.
 3. Discovery. Local discovery is currently limited to finding the IP address in the cloud assisted config. Performing discovery in background would allow notifications to be raised when new devices are noticed on the network, and would provide a productKey for the manual config method to use when matching device configs.
 
+
+## Native local camera video in this fork
+
+Install `custom_components/tuya_local` from this fork's [feat-jvs-local-webrtc branch](https://github.com/pastukhov/tuya-local/tree/feat-jvs-local-webrtc) into Home Assistant's `/config/custom_components/tuya_local`, then restart HA. Use the existing Tuya Local integration entry; the updated JVS profile adds the camera to that same device.
+
+1. Choose the **JVS GRANT HD WiFi** profile, protocol **3.3**, and enable **Force device22 query format**.
+2. In device options, enter the separate **RTC authentication** password and save. Existing JVS entries can be reloaded after updating the integration.
+3. Open the camera's live view. Stop any other bridge or app session using this camera; the integration shares one native session between image and stream viewers.
+
+The JVS GRANT HD WiFi profile includes a native camera entity alongside its SD status and doorbell event on the same device. Configure protocol 3.3 and the device22 option, then supply the separate RTC authentication value in device options. The optional password field is never populated with the stored value; leaving it blank preserves the existing credential. The credential is saved in the HA entry/options and omitted from diagnostics.
+
+One in-process LAN WebRTC session supplies both JPEG images and Home Assistant streaming through a shared ephemeral loopback MPEG-TS listener. No separate container or bridge process is required. Media stalls mark the camera unavailable and reconnect with bounded backoff; removing or unloading the entity closes its session and listener. Current media support is SD 640×360 video; audio, talkback and HD are not implemented. Cold startup may still need the device cloud connection (MQTT TCP8883), so a warm session surviving WAN isolation does not establish fully offline cold-start operation. This transport does not renew cloud RTC credentials.

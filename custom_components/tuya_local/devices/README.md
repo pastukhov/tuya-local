@@ -847,3 +847,7 @@ to use it for other length timers.
 
 - **away_mode** (optional, boolean): a dp to control whether the water heater is in away mode.
 
+
+### `local_webrtc` (camera entities in this fork)
+
+An opt-in boolean for the JVS native LAN video transport. Defaults to false; existing camera profiles continue to use DPS snapshots. A native camera may use `dps: []`; device matching still uses the required DPS of the other entities. RTC credentials come from device options, never from device YAML.

@@ -355,6 +355,11 @@ class TuyaEntityConfig:
         return icon
 
     @property
+    def local_webrtc(self):
+        """Opt into device-local native WebRTC media for a camera."""
+        return self._config.get("local_webrtc", False)
+
+    @property
     def mode(self):
         """Return the mode (used by Number entities)."""
         return self._config.get("mode")

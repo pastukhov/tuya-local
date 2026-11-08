@@ -41,6 +41,7 @@
                     "protocol_version": "Versió del protocol (intenteu-ho automàticament si no es coneix)",
                     "poll_only": "Només enquestes (proveu això si el vostre dispositiu no funciona completament)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "node_id o uuid del subdispositiu (per a dispositius connectats a través d'una passarel·la)"
                 }
             },
@@ -96,7 +97,8 @@
                     "local_key": "Clau local",
                     "protocol_version": "Versió del protocol (intenteu-ho automàticament si no es coneix)",
                     "poll_only": "Només enquestes (proveu això si el vostre dispositiu no funciona completament)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 },
                 "description": "[Seguiu aquestes instruccions per a trobar la vostra clau local.]({device_details_url})"
             }

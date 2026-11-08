@@ -42,6 +42,7 @@
                     "protocol_version": "协议版本（如果不清楚，请选择自动）",
                     "poll_only": "仅轮询（如果设备无法正常工作，请选择此项）",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "子设备node_id或uuid（对于通过网关连接的设备）"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Local key",
                     "protocol_version": "协议版本（如果不清楚，请选择自动）",
                     "poll_only": "仅轮询（如果设备无法正常工作，请选择此项）",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },

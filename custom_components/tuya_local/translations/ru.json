@@ -42,6 +42,7 @@
                     "protocol_version": "Версия протокола (попробуйте auto, если не уверены)",
                     "poll_only": "Только опрос (попробуйте это, если ваше устройство не работает в полной мере)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "node_id или uuid подустройства (для устройств, подключенных через шлюз)"
                 }
             },
@@ -97,7 +98,8 @@
                     "local_key": "Локальный ключ",
                     "protocol_version": "Версия протокола (попробуйте auto, если не уверены)",
                     "poll_only": "Только опрос (попробуйте это, если ваше устройство не работает в полной мере)",
-                    "force_device22": "Force device22 query format (only if required)"
+                    "force_device22": "Force device22 query format (only if required)",
+                    "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }
         },
