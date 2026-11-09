@@ -33,6 +33,7 @@ from .const import (
     CONF_DEVICE_CID,
     CONF_DEVICE_ID,
     CONF_FORCE_DEVICE22,
+    CONF_IMM_AUTH,
     CONF_LOCAL_KEY,
     CONF_MANUFACTURER,
     CONF_MODEL,
@@ -405,6 +406,8 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                 devcid_opts = {"default": self.__discovered_device.get(CONF_DEVICE_CID)}
 
         if user_input is not None:
+            if not user_input.get(CONF_IMM_AUTH):
+                user_input.pop(CONF_IMM_AUTH, None)
             proto = user_input.get(CONF_PROTOCOL_VERSION)
             if proto != "auto":
                 user_input[CONF_PROTOCOL_VERSION] = float(proto)
@@ -461,6 +464,9 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                     ): vol.In(["auto"] + [str(v) for v in API_PROTOCOL_VERSIONS]),
                     vol.Required(CONF_POLL_ONLY, **polling_opts): bool,
                     vol.Optional(CONF_FORCE_DEVICE22, **force_device22_opts): bool,
+                    vol.Optional(CONF_IMM_AUTH): TextSelector(
+                        TextSelectorConfig(type=TextSelectorType.PASSWORD)
+                    ),
                     vol.Optional(CONF_RTC_AUTH): TextSelector(
                         TextSelectorConfig(type=TextSelectorType.PASSWORD)
                     ),
@@ -638,6 +644,8 @@ class OptionsFlowHandler(OptionsFlow):
             # Leaving the password field empty retains the configured secret.
             if not user_input.get(CONF_RTC_AUTH):
                 user_input.pop(CONF_RTC_AUTH, None)
+            if not user_input.get(CONF_IMM_AUTH):
+                user_input.pop(CONF_IMM_AUTH, None)
             proto = user_input.get(CONF_PROTOCOL_VERSION)
             if proto != "auto":
                 user_input[CONF_PROTOCOL_VERSION] = float(proto)
@@ -646,11 +654,16 @@ class OptionsFlowHandler(OptionsFlow):
             if device:
                 if config.get(CONF_RTC_AUTH):
                     user_input[CONF_RTC_AUTH] = config[CONF_RTC_AUTH]
+                if config.get(CONF_IMM_AUTH):
+                    user_input[CONF_IMM_AUTH] = config[CONF_IMM_AUTH]
                 return self.async_create_entry(title="", data=user_input)
             else:
                 errors["base"] = "connection"
 
         schema = {
+            vol.Optional(CONF_IMM_AUTH): TextSelector(
+                TextSelectorConfig(type=TextSelectorType.PASSWORD)
+            ),
             vol.Optional(CONF_RTC_AUTH): TextSelector(
                 TextSelectorConfig(type=TextSelectorType.PASSWORD)
             ),

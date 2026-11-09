@@ -13,7 +13,7 @@ from homeassistant.components.camera import Camera as CameraEntity
 from homeassistant.components.camera import CameraEntityFeature
 from homeassistant.const import CONF_HOST
 
-from .const import CONF_DEVICE_ID, CONF_LOCAL_KEY, CONF_RTC_AUTH
+from .const import CONF_DEVICE_ID, CONF_IMM_AUTH, CONF_LOCAL_KEY, CONF_RTC_AUTH
 from .device import TuyaLocalDevice
 from .entity import TuyaLocalEntity
 from .helpers.config import async_tuya_setup_platform
@@ -68,12 +68,15 @@ class TuyaLocalCamera(TuyaLocalEntity, CameraEntity):
         self._native_added = False
         self._remove_task = None
         connection = connection_config or {}
-        if self._native_video and connection.get(CONF_RTC_AUTH):
+        if self._native_video and (
+            connection.get(CONF_RTC_AUTH) or connection.get(CONF_IMM_AUTH)
+        ):
             self._rtc_config = RTCConfig(
                 device_id=connection[CONF_DEVICE_ID],
                 ip=connection.get(CONF_HOST) or device._api.address,
                 local_key=connection[CONF_LOCAL_KEY],
-                rtc_auth=connection[CONF_RTC_AUTH],
+                rtc_auth=connection.get(CONF_RTC_AUTH, ""),
+                imm_auth=connection.get(CONF_IMM_AUTH, ""),
             )
         dps_map = self._init_begin(device, config)
         self._switch_dp = dps_map.pop("switch", None)

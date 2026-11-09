@@ -42,6 +42,7 @@
                     "protocol_version": "Версія протоколу (якщо не знаєте, спробуйте 'auto')",
                     "poll_only": "Виключно опитування (спробуйте це, якщо ваш пристрій не зовсім працює)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "imm_auth": "IMM authentication (optional, local HD video and audio)",
                     "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "Sub device node_id або uuid (для пристроїв, підключених через шлюз)"
                 }
@@ -99,6 +100,7 @@
                     "protocol_version": "Версія протоколу (якщо не знаєте, спробуйте 'auto')",
                     "poll_only": "Виключно опитування (спробуйте це, якщо ваш пристрій не зовсім працює)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "imm_auth": "IMM authentication (optional, local HD video and audio)",
                     "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }

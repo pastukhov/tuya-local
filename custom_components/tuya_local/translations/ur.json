@@ -42,6 +42,7 @@
                     "protocol_version": "پروٹوکول ورژن (اگر معلوم نہ ہو تو خود کار طریقے سے آزمائیں)",
                     "poll_only": "صرف پول کریں (اگر آپ کا آلہ مکمل طور پر کام نہیں کرتا ہے تو اسے آزمائیں)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "imm_auth": "IMM authentication (optional, local HD video and audio)",
                     "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "ذیلی آلہ کا node_id یا uuid (گیٹ وے کے ذریعے منسلک آلات کے لیے)"
                 }
@@ -99,6 +100,7 @@
                     "protocol_version": "پروٹوکول ورژن (اگر معلوم نہ ہو تو خود کار طریقے سے آزمائیں)",
                     "poll_only": "صرف پول (اگر آپ کا آلہ پوری طرح کام نہیں کرتا ہے تو اسے آزمائیں)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "imm_auth": "IMM authentication (optional, local HD video and audio)",
                     "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }

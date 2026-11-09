@@ -11,6 +11,7 @@ class RTCConfig:
     ip: str
     local_key: str
     rtc_auth: str
+    imm_auth: str = ""
 
     def __repr__(self):
         return "RTCConfig(<redacted>)"

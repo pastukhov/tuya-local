@@ -10,6 +10,7 @@ CONF_MODEL = "model"
 CONF_POLL_ONLY = "poll_only"
 CONF_FORCE_DEVICE22 = "force_device22"
 CONF_RTC_AUTH = "rtc_auth"
+CONF_IMM_AUTH = "imm_auth"
 CONF_DEVICE_CID = "device_cid"
 CONF_PROTOCOL_VERSION = "protocol_version"
 API_PROTOCOL_VERSIONS = [3.3, 3.1, 3.2, 3.4, 3.5, 3.22, 3.42, 3.52]

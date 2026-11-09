@@ -88,8 +88,11 @@ async def test_init_entry_fails_if_config_is_missing(hass):
     m_add_entities.assert_not_called()
 
 
+@pytest.mark.parametrize("auth_field", ["rtc_auth", "imm_auth"])
 @pytest.mark.asyncio
-async def test_native_camera_shares_service_and_closes_on_removal(hass, mocker):
+async def test_native_camera_shares_service_and_closes_on_removal(
+    hass, mocker, auth_field
+):
     """Image and stream consumers share one bounded native media session."""
     import asyncio
 
@@ -125,7 +128,7 @@ async def test_native_camera_shares_service_and_closes_on_removal(hass, mocker):
             "device_id": "device",
             "host": "127.0.0.1",
             "local_key": "secret",
-            "rtc_auth": "rtc-secret",
+            auth_field: "media-secret",
         },
     )
     camera.hass = hass
@@ -137,6 +140,10 @@ async def test_native_camera_shares_service_and_closes_on_removal(hass, mocker):
     assert camera.available and camera.is_on
     await camera.async_added_to_hass()
     assert factory.call_count == 1
+    rtc_config = factory.call_args.args[0]
+    assert getattr(rtc_config, auth_field) == "media-secret"
+    other_key = "imm_auth" if auth_field == "rtc_auth" else "rtc_auth"
+    assert getattr(rtc_config, other_key) == ""
     service.hub.get_snapshot.return_value = None
     assert not camera.available
     await camera.async_will_remove_from_hass()

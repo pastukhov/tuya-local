@@ -42,6 +42,7 @@
                     "protocol_version": "Version du Protocole (Auto si inconnu)",
                     "poll_only": "Poll only (Essayez ceci si votre appareil ne fonctionne pas complètement)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "imm_auth": "IMM authentication (optional, local HD video and audio)",
                     "rtc_auth": "RTC authentication (optional, local video only)",
                     "device_cid": "node_id ou uuid de sous-appareil (Pour les appareils connectés via une passerelle)"
                 }
@@ -99,6 +100,7 @@
                     "protocol_version": "Version du Protocole (Auto si inconnu)",
                     "poll_only": "Poll only (essayez ceci si votre appareil ne fonctionne pas complètement)",
                     "force_device22": "Force device22 query format (only if required)",
+                    "imm_auth": "IMM authentication (optional, local HD video and audio)",
                     "rtc_auth": "RTC authentication (optional, local video only)"
                 }
             }

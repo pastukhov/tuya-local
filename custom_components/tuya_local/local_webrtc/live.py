@@ -92,6 +92,7 @@ class TransportEncoder:
                 "mpegts_flags": "resend_headers+initial_discontinuity",
                 "flush_packets": "1",
                 "pat_period": "0.1",
+                "max_interleave_delta": "100000",
             },
         )
         self.stream = self.container.add_stream("libx264", rate=25)
@@ -107,34 +108,86 @@ class TransportEncoder:
             "crf": "23",
             "x264-params": "repeat-headers=1:keyint=25:min-keyint=25:scenecut=0",
         }
-        self.first = self.previous = None
+        self.first = None
+        self.previous = {}
+        self.started = False
+        self.audio_stream = self.container.add_stream("aac", rate=48000)
+        self.audio_stream.layout = "mono"
+        self.audio_stream.bit_rate = 64000
+        self.audio_stream.codec_context.time_base = Fraction(1, 48000)
+        self.resampler = av.AudioResampler(format="fltp", layout="mono", rate=48000)
+        self.audio_pts = None
+        self.pending_audio = []
 
     def push(self, frame):
-        if (
-            (frame.width, frame.height) != (640, 360)
-            or frame.pts is None
-            or frame.time_base is None
+        if self.container is None:
+            raise ValueError("Encoder is closed")
+        audio = isinstance(frame, av.AudioFrame)
+        if not audio and (
+            not isinstance(frame, av.VideoFrame)
+            or (frame.width, frame.height) not in ((640, 360), (1280, 720))
         ):
-            raise ValueError("Expected timestamped SD camera video")
+            raise ValueError("Unsupported resolution")
+        if frame.pts is None or frame.time_base is None:
+            raise ValueError("Expected timestamped camera media")
         timestamp = Fraction(frame.pts) * frame.time_base
+        previous = self.previous.get(audio)
+        if previous is not None and not 0 < timestamp - previous <= 30:
+            raise ValueError("Camera timestamps did not advance")
         if self.first is None:
             self.first = timestamp
-        if self.previous is not None and timestamp <= self.previous:
-            raise ValueError("Camera timestamps did not advance")
-        self.previous = timestamp
+        if not -30 <= timestamp - self.first < 24 * 3600:
+            raise ValueError("Camera timestamp outside session bounds")
+        self.previous[audio] = timestamp
+        if audio:
+            # Video defines the negotiated resolution before the muxer writes headers.
+            if not self.started:
+                if len(self.pending_audio) >= 100:
+                    raise ValueError("Video missing before audio queue limit")
+                self.pending_audio.append((frame, timestamp))
+                return
+            self._audio(frame, timestamp)
+            return
+        if not self.started:
+            self.stream.width, self.stream.height = frame.width, frame.height
+            self.started = True
+            for audio_frame, audio_timestamp in self.pending_audio:
+                self._audio(audio_frame, audio_timestamp)
+            self.pending_audio.clear()
+        elif (frame.width, frame.height) != (self.stream.width, self.stream.height):
+            raise ValueError("Unsupported resolution")
         output = frame.reformat(format="yuv420p")
         output.pts = round((timestamp - self.first) * 90000)
         output.time_base = Fraction(1, 90000)
         for packet in self.stream.encode(output):
             self.container.mux(packet)
 
+    def _audio(self, frame, timestamp):
+        if self.audio_pts is None:
+            self.audio_pts = round((timestamp - self.first) * 48000)
+        for output in self.resampler.resample(frame):
+            output.pts = self.audio_pts
+            output.time_base = Fraction(1, 48000)
+            self.audio_pts += output.samples
+            for packet in self.audio_stream.encode(output):
+                self.container.mux(packet)
+
     def close(self):
         if self.container is not None:
             container, self.container = self.container, None
             try:
-                for packet in self.stream.encode():
-                    container.mux(packet)
+                if self.started:
+                    for output in self.resampler.resample(None):
+                        output.pts = self.audio_pts
+                        output.time_base = Fraction(1, 48000)
+                        self.audio_pts += output.samples
+                        for packet in self.audio_stream.encode(output):
+                            container.mux(packet)
+                    for stream in (self.stream, self.audio_stream):
+                        for packet in stream.encode():
+                            container.mux(packet)
             finally:
+                self.pending_audio.clear()
                 container.close()
 
 
@@ -238,12 +291,23 @@ class LiveService:
         *,
         bind="127.0.0.1",
         port=19845,
-        session_factory=Session,
+        session_factory=None,
         reconnect_min=1,
         reconnect_max=15,
+        video_stall_timeout=5,
+        startup_timeout=30,
     ):
+        if session_factory is None:
+            if getattr(config, "imm_auth", None):
+                from .imm import IMMSession
+
+                session_factory = IMMSession
+            else:
+                session_factory = Session
         self.config, self.session_factory = config, session_factory
         self.reconnect_min, self.reconnect_max = reconnect_min, reconnect_max
+        self.video_stall_timeout = video_stall_timeout
+        self.startup_timeout = startup_timeout
         self.hub = FrameHub()
         self.http = LiveServer(self.hub, bind, port)
         self.frames_received = 0
@@ -253,15 +317,40 @@ class LiveService:
     async def camera_loop(self):
         delay = self.reconnect_min
         while True:
-            session = self.session_factory(self.config, "sd", 30)
-            encoder = None
+            session = encoder = media = None
             try:
+                session = (
+                    self.session_factory(self.config)
+                    if getattr(self.config, "imm_auth", None)
+                    else self.session_factory(self.config, "sd", 30)
+                )
                 encoder = TransportEncoder(self.hub.broadcast)
                 last_jpeg = 0
-                async for frame in session.frames():
-                    if (frame.width, frame.height) != (640, 360):
+                media = (
+                    session.media_frames()
+                    if hasattr(session, "media_frames")
+                    else session.frames()
+                )
+                video_deadline = time.monotonic() + self.startup_timeout
+                while True:
+                    remaining = video_deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise TimeoutError("Camera startup or media stall timeout")
+                    try:
+                        frame = await asyncio.wait_for(anext(media), remaining)
+                    except StopAsyncIteration:
+                        break
+                    except TimeoutError:
+                        raise TimeoutError(
+                            "Camera startup or media stall timeout"
+                        ) from None
+                    if isinstance(frame, av.AudioFrame):
+                        encoder.push(frame)
+                        continue
+                    if (frame.width, frame.height) not in ((640, 360), (1280, 720)):
                         raise ValueError("Unsupported resolution")
                     now = time.monotonic()
+                    video_deadline = now + self.video_stall_timeout
                     if now - last_jpeg >= 0.25:
                         data = io.BytesIO()
                         frame.to_image().save(data, format="JPEG", quality=90)
@@ -292,7 +381,7 @@ class LiveService:
                     "Camera media ended": "media_ended",
                     "Resolution negotiation failed": "resolution_failed",
                     "Camera timestamps did not advance": "timestamp_invalid",
-                    "Expected timestamped SD camera video": "timestamp_missing",
+                    "Expected timestamped camera media": "timestamp_missing",
                     "Unsupported resolution": "resolution_changed",
                 }.get(str(error), "media_error")
             finally:
@@ -302,8 +391,12 @@ class LiveService:
                         with suppress(Exception):
                             encoder.close()
                 finally:
-                    with suppress(Exception):
-                        await session.close()
+                    if media is not None and hasattr(media, "aclose"):
+                        with suppress(Exception):
+                            await media.aclose()
+                    if session is not None:
+                        with suppress(Exception):
+                            await session.close()
             await asyncio.sleep(delay)
             delay = min(delay * 2, self.reconnect_max)
 
